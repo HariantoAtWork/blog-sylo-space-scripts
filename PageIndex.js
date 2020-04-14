@@ -87,5 +87,9 @@ class PageIndex extends HTMLElement {
 }
 
 // Define the new element
-customElements.define('page-index', PageIndex)
+document.addEventListener(
+	onDOMContentLoaded,
+	customElements.define.bind(customElements, 'page-index', PageIndex)
+)
+
 console.log('PageIndex - loaded', { PageIndex })
