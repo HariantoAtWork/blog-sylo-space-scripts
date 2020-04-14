@@ -88,4 +88,4 @@ class PageIndex extends HTMLElement {
 
 // Define the new element
 customElements.define('page-index', PageIndex)
-console.log('PageIndex - loaded')
+console.log('PageIndex - loaded', { PageIndex })
