@@ -3,5 +3,3 @@ const setStyle = (el, style) => {
     el.style[key] = value
   }
 }
-
-module.export = setStyle
