@@ -1,0 +1,72 @@
+<script>
+    "strict"
+    const loadScript = url =>
+        fetch(url)
+            .then(response => response.text())
+            //.then(text => {
+            //    console.log(text)
+            //    return text })
+            .then(text => eval(text))
+            .catch(console.error.bind(console, 'FAIL: loadScript'))
+
+    const loadScripts = scripts => {
+        const promises = scripts => {
+            const list = []
+            scripts.forEach(i => list.push(loadScript(i)))
+            return list
+        }
+
+        return Promise.all(promises(scripts))
+            .then(values => values.forEach(script => eval(script)))
+            .catch(console.error.bind(console, 'FAIL: Promise.all'))
+    }
+    const scriptObjects = {
+        PageIndex: 'https://raw.githubusercontent.com/HariantoAtWork/blog-sylo-space-scripts/master/PageIndex.js',
+        createDisqusThreadPostFooter: 'https://raw.githubusercontent.com/HariantoAtWork/blog-sylo-space-scripts/master/createDisqusThreadPostFooter.js',
+        addLineNumbersOnPrismCodeHighlighting: 'https://raw.githubusercontent.com/HariantoAtWork/blog-sylo-space-scripts/master/addLineNumbersOnPrismCodeHighlighting.js'
+    }
+    const scripts = Object.entries(scriptObjects).map(([key, value]) => value)
+
+    //loadScript(scriptObjects.addLineNumbersOnPrismCodeHighlighting)
+    //    .then(console.log.bind(console, 'SUCCESS'))
+    //    .catch(console.error.bind(console, 'FAIL loadScript'))
+    loadScripts(scripts)
+</script>
+<script>
+    loadScript('https://unpkg.com/vue')
+        .then(loadScript.bind(null, '/assets/built/vue/ghost-search.min.js'))
+        .then(() => {
+            // Creates element: ghost-search
+            let d = document
+            if (!d.body) d.body = d.createElement('body')
+            const ghostSearchDom = d.createElement('ghost-search')
+            const attributes = {
+                'url': location.origin,
+                'ghost-key': 'd74579e93e65600e617d0b9823'
+            }
+            for (let [key, value] of Object.entries(attributes)) {
+                const attr = d.createAttribute(key)
+                attr.value = value
+                ghostSearchDom.setAttributeNode(attr)
+            }
+            d.body.appendChild(ghostSearchDom)
+        })
+</script>
+
+<!-- Disqus Counts -->
+<script id="dsq-count-scr" src="//hariantoatworkblog.disqus.com/count.js" async></script>
+<script>
+    document.getElementById('dsq-count-scr').onload = () => {
+        let d = document,
+            postFeed = d.querySelector('#site-main .post-feed'),
+            postFeedObserver = new MutationObserver(
+                mutations =>
+                    mutations && DISQUSWIDGETS && DISQUSWIDGETS.getCount({ reset: true })
+            )
+
+        postFeed && postFeedObserver.observe(postFeed, {
+            childList: true
+        })
+    }
+
+</script>
