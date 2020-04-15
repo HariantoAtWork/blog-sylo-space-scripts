@@ -65,12 +65,16 @@
 			list-style: none;
 			padding-left: unset;
 			// margin-left: 0;
-			@width: 12px;
+
 			counter-reset: major minor patch fix;
-			.pageindex-index--H1,
-			.pageindex-index--H2,
-			.pageindex-index--H3,
-			.pageindex-index--H4 {
+		}
+		&__list-item {
+			display: block;
+			@width: 12px;
+			> .pageindex-index--H1,
+			> .pageindex-index--H2,
+			> .pageindex-index--H3,
+			> .pageindex-index--H4 {
 				position: relative;
 				&:before {
 					position: absolute;
@@ -81,43 +85,60 @@
 					font-family: Consolas, Monaco, Andale Mono, Ubuntu Mono, monospace;
 					color: #0fb8ad;
 					font-size: 12px;
+					// background: linear-gradient(
+					// 	141deg,
+					// 	#0fb8ad,
+					// 	#1fc8db 51%,
+					// 	#2cb5e8 75%
+					// );
+					// background-clip: text;
+					// -webkit-text-fill-color: transparent;
 				}
 			}
-			.pageindex-index--H1 {
-				margin-left: @width * 0;
+
+			&--H1 {
 				counter-reset: minor;
 				counter-increment: major;
+			}
+			> .pageindex-index--H1 {
+				margin-left: @width * 0;
 				&:before {
 					content: counter(major) ' ';
 				}
 			}
-			.pageindex-index--H2 {
-				margin-left: @width * 1;
+
+			&--H2 {
 				counter-reset: patch;
 				counter-increment: minor;
+			}
+			> .pageindex-index--H2 {
+				margin-left: @width * 1;
 				&:before {
 					content: counter(major) '.' counter(minor) ' ';
 				}
 			}
-			.pageindex-index--H3 {
-				margin-left: @width * 2;
+
+			&--H3 {
 				counter-reset: fix;
 				counter-increment: patch;
+			}
+			> .pageindex-index--H3 {
+				margin-left: @width * 2;
 				&:before {
 					content: counter(major) '.' counter(minor) '.' counter(patch) ' ';
 				}
 			}
-			.pageindex-index--H4 {
-				margin-left: @width * 3;
+
+			&--H4 {
 				counter-increment: fix;
+			}
+			> .pageindex-index--H4 {
+				margin-left: @width * 3;
 				&:before {
 					content: counter(major) '.' counter(minor) '.' counter(patch) '.'
 						counter(fix) ' ';
 				}
 			}
-		}
-		&__list-item {
-			display: block;
 		}
 	}
 }
