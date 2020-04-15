@@ -1,0 +1,8 @@
+<div class="pageindex-index">
+    <ul class="pageindex-index__list">
+        <li class="pageindex-index__list-item" v-for="item in items">
+            <a @click="gotoHeader($event, item)" :href="'#'+item.id" :class="[ `pageindex-index--${item.tagName}` ]"
+                v-html="item.innerHTML" />
+        </li>
+    </ul>
+</div>

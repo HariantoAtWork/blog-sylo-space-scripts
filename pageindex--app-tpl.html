@@ -1,0 +1,9 @@
+<div class="pageindex">
+    <main class="pageindex__main" v-show="show">
+        <Index :element="element" />
+    </main>
+    <footer class="pageindex__footer">
+        <button @click="onTogglePanel" class="pageindex__button"><i class="fa"
+                :class="{'fa-list': !show, 'fa-window-close': show}"></i></button>
+    </footer>
+</div>

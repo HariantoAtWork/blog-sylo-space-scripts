@@ -3,6 +3,10 @@ class PageIndex extends HTMLElement {
 		// Always call super first in constructor
 		super()
 
+		if (history.scrollRestoration) {
+			history.scrollRestoration = 'manual'
+		}
+
 		const d = document,
 			options = () => {
 				const attr = {}
@@ -75,21 +79,24 @@ class PageIndex extends HTMLElement {
 				(rootEl().scrollTop = state.pageIndex.scrollTop)
 		}
 
-		window.addEventListener('DOMContentLoaded', onDOMContentLoaded)
 		window.addEventListener('popstate', onPopstate)
-
 		// Init
-		history.replaceState(
-			{ pageIndex: { scrollTop: rootEl().scrollTop } },
-			d.title
-		)
+		if (
+			d.readyState === 'complete' ||
+			d.readyState === 'loaded' ||
+			d.readyState === 'interactive'
+		) {
+			// document has at least been parsed
+			onDOMContentLoaded()
+			history.replaceState(
+				{ pageIndex: { scrollTop: rootEl().scrollTop } },
+				d.title
+			)
+		} else {
+			window.addEventListener('DOMContentLoaded', onDOMContentLoaded)
+		}
 	}
 }
 
 // Define the new element
-document.addEventListener(
-	'onDOMContentLoaded',
-	customElements.define.bind(customElements, 'page-index', PageIndex)
-)
-
-console.log('PageIndex - loaded', { PageIndex })
+customElements.define('page-index', PageIndex)
