@@ -32,8 +32,8 @@
 				const t = d.documentElement || d.body.parentNode
 				return t && typeof t.scrollTop == 'number' ? t : d.body
 			},
-			pushState = scrollTop => {
-				const pageIndex = { scrollTop: scrollTop || rootEl().scrollTop }
+			pushState = ({ scrollTop, header }) => {
+				const pageIndex = { scrollTop: scrollTop || rootEl().scrollTop, header }
 				history.pushState({ pageIndex }, d.title)
 			},
 			onPopstate = event => {
@@ -63,9 +63,11 @@
 			methods: {
 				onPopstate(event) {
 					const { state } = event
-					state &&
-						state.pageIndex &&
-						(rootEl().scrollTop = state.pageIndex.scrollTop)
+					if (!state.pageIndex) return
+					const { scrollTop, header } = state.pageIndex
+					rootEl().scrollTop =
+						(header && this.getOffsetScrollTop(d.getElementById(header))) ||
+						scrollTop
 				},
 				getOffsetScrollTop(el, relativeEl) {
 					return (
@@ -81,7 +83,10 @@
 				},
 				gotoHeader(event, el) {
 					event.preventDefault()
-					pushState(this.getOffsetScrollTop(el))
+					pushState({
+						scrollTop: this.getOffsetScrollTop(el),
+						header: el.id
+					})
 					rootEl().scrollTop = this.getOffsetScrollTop(el)
 				}
 			},
@@ -116,8 +121,16 @@
 			mounted() {
 				window.addEventListener('popstate', onPopstate)
 				history.replaceState(
-					{ pageIndex: { scrollTop: rootEl().scrollTop } },
-					d.title
+					{
+						pageIndex: {
+							scrollTop: rootEl().scrollTop,
+							...(window.location.hash && {
+								header: window.location.hash.substring(1)
+							})
+						}
+					},
+					d.title,
+					window.location.href
 				)
 			}
 		})
