@@ -34,7 +34,15 @@
 			},
 			pushState = ({ scrollTop, header }) => {
 				const pageIndex = { scrollTop: scrollTop || rootEl().scrollTop, header }
-				history.pushState({ pageIndex }, d.title)
+				if (header) {
+					history.pushState(
+						{ pageIndex },
+						d.title,
+						window.location.pathname + '#' + header
+					)
+				} else {
+					history.pushState({ pageIndex }, d.title)
+				}
 			},
 			onPopstate = event => {
 				const { state } = event
@@ -119,19 +127,26 @@
 				}
 			},
 			mounted() {
+				const hash = window.location.hash
 				window.addEventListener('popstate', onPopstate)
 				history.replaceState(
 					{
 						pageIndex: {
 							scrollTop: rootEl().scrollTop,
-							...(window.location.hash && {
-								header: window.location.hash.substring(1)
+							...(hash && {
+								header: hash.substring(1)
 							})
 						}
 					},
 					d.title,
 					window.location.href
 				)
+
+				if (hash) {
+					rootEl().scrollTop = Index.methods.getOffsetScrollTop(
+						d.getElementById(hash.substring(1))
+					)
+				}
 			}
 		})
 
