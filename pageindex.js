@@ -49,6 +49,26 @@
 				state &&
 					state.pageIndex &&
 					(rootEl().scrollTop = state.pageIndex.scrollTop)
+			},
+			vClickOutside = () => {
+				const findParentElement = (el, target) => {
+					while (el.parentNode) {
+						el = el.parentNode
+						if (el === target) return el
+					}
+					return null
+				}
+				return {
+					bind(el, binding, vnode) {
+						el.event = event => {
+							if (!findParentElement(event.target, el)) binding.value()
+						}
+						document.body.addEventListener('click', el.event)
+					},
+					unbind(el, binding, vnode) {
+						document.body.removeEventListener('click', el.event)
+					}
+				}
 			}
 
 		Vue.config.ignoredElements = ['page-index']
@@ -108,6 +128,9 @@
 		const App = Vue.extend({
 			name: 'App',
 			template: appTpl,
+			directives: {
+				'click-outside': vClickOutside()
+			},
 			components: {
 				Index
 			},
@@ -124,6 +147,9 @@
 			methods: {
 				onTogglePanel() {
 					this.show = !this.show
+				},
+				onClose() {
+					this.show = false
 				}
 			},
 			mounted() {

@@ -1,5 +1,5 @@
-<div class="pageindex">
-    <main class="pageindex__main" v-show="show">
+<div class="pageindex" v-click-outside="onClose">
+    <main v-show="show" class="pageindex__main">
         <Index :element="element" />
     </main>
     <footer class="pageindex__footer">
