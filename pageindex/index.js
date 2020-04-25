@@ -181,6 +181,6 @@
 			}
 		})
 
-		PageIndex.$mount('#target')
+		PageIndex.$mount('#page-index')
 	})
 })()
