@@ -20,8 +20,8 @@
 	}
 
 	const templates = [
-		'/content/images/files/js/pageindex--app-tpl.html',
-		'/content/images/files/js/pageindex--index-tpl.html'
+		'/content/images/files/js/pageindex/pageindex--app-tpl.html',
+		'/content/images/files/js/pageindex/pageindex--index-tpl.html'
 	]
 
 	loadTemplates(templates).then(values => {
@@ -71,7 +71,6 @@
 				}
 			}
 
-		Vue.config.ignoredElements = ['page-index']
 		// Component: Index
 		const Index = {
 			name: 'Index',
