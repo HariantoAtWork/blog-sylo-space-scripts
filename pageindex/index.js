@@ -80,9 +80,9 @@
 					}
 				}
 			},
-			prependStyle = el => {
+			prependStyle = (el, css) => {
 				const style = document.createElement('style')
-				style.innerHTML = appStyle
+				style.innerHTML = css
 				el.prepend(style)
 			}
 
@@ -188,7 +188,7 @@
 					)
 				}
 
-				prependStyle(this.$el)
+				prependStyle(this.$el, appStyle)
 			}
 		})
 
