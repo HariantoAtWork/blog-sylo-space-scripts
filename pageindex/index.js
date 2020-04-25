@@ -20,12 +20,19 @@
 	}
 
 	const templates = [
+		'/content/images/files/js/pageindex/pageindex.less',
 		'/content/images/files/js/pageindex/pageindex--app-tpl.html',
 		'/content/images/files/js/pageindex/pageindex--index-tpl.html'
 	]
 
-	loadTemplates(templates).then(values => {
-		const [appTpl, indexTpl] = values
+	loadTemplates(templates)
+	.then(values => {
+		const [appStyle, appTpl, indexTpl] = values
+
+		return less.render(appStyle).then(({ css }) => [css, appTpl, indexTpl])
+	})
+	.then(values => {
+		const [appStyle, appTpl, indexTpl] = values
 
 		const d = document,
 			rootEl = () => {
@@ -33,7 +40,10 @@
 				return t && typeof t.scrollTop == 'number' ? t : d.body
 			},
 			pushState = ({ scrollTop, header }) => {
-				const pageIndex = { scrollTop: scrollTop || rootEl().scrollTop, header }
+				const pageIndex = {
+					scrollTop: scrollTop || rootEl().scrollTop,
+					header
+				}
 				if (header) {
 					history.pushState(
 						{ pageIndex },
@@ -69,6 +79,11 @@
 						document.body.removeEventListener('click', el.event)
 					}
 				}
+			},
+			prependStyle = el => {
+				const style = document.createElement('style')
+				style.innerHTML = appStyle
+				el.prepend(style)
 			}
 
 		// Component: Index
@@ -172,6 +187,8 @@
 						d.getElementById(hash.substring(1))
 					)
 				}
+
+				prependStyle(this.$el)
 			}
 		})
 
