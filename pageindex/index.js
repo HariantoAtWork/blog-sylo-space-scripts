@@ -73,15 +73,15 @@
 						el.event = event => {
 							if (!findParentElement(event.target, el)) binding.value()
 						}
-						document.body.addEventListener('click', el.event)
+						d.body.addEventListener('click', el.event)
 					},
 					unbind(el, binding, vnode) {
-						document.body.removeEventListener('click', el.event)
+						d.body.removeEventListener('click', el.event)
 					}
 				}
 			},
 			prependStyle = (el, css) => {
-				const style = document.createElement('style')
+				const style = d.createElement('style')
 				style.innerHTML = css
 				el.prepend(style)
 			}
