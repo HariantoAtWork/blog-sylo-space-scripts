@@ -28,7 +28,6 @@
 	loadTemplates(templates)
 	.then(values => {
 		const [appStyle, appTpl, indexTpl] = values
-
 		return less.render(appStyle).then(({ css }) => [css, appTpl, indexTpl])
 	})
 	.then(values => {
