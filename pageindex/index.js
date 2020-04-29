@@ -26,177 +26,177 @@
 	]
 
 	loadTemplates(templates)
-	.then(values => {
-		const [appStyle, appTpl, indexTpl] = values
-		return less.render(appStyle).then(({ css }) => [css, appTpl, indexTpl])
-	})
-	.then(values => {
-		const [appStyle, appTpl, indexTpl] = values
+		.then(values => {
+			const [appStyle, appTpl, indexTpl] = values
 
-		const d = document,
-			rootEl = () => {
-				const t = d.documentElement || d.body.parentNode
-				return t && typeof t.scrollTop == 'number' ? t : d.body
-			},
-			pushState = ({ scrollTop, header }) => {
-				const pageIndex = {
-					scrollTop: scrollTop || rootEl().scrollTop,
-					header
-				}
-				if (header) {
-					history.pushState(
-						{ pageIndex },
-						d.title,
-						window.location.pathname + '#' + header
-					)
-				} else {
-					history.pushState({ pageIndex }, d.title)
-				}
-			},
-			onPopstate = event => {
-				const { state } = event
-				state &&
-					state.pageIndex &&
-					(rootEl().scrollTop = state.pageIndex.scrollTop)
-			},
-			vClickOutside = () => {
-				const findParentElement = (el, target) => {
-					while (el.parentNode) {
-						el = el.parentNode
-						if (el === target) return el
-					}
-					return null
-				}
-				return {
-					bind(el, binding, vnode) {
-						el.event = event => {
-							if (!findParentElement(event.target, el)) binding.value()
-						}
-						d.body.addEventListener('click', el.event)
-					},
-					unbind(el, binding, vnode) {
-						d.body.removeEventListener('click', el.event)
-					}
-				}
-			},
-			prependStyle = (el, css) => {
-				const style = d.createElement('style')
-				style.innerHTML = css
-				el.prepend(style)
-			}
+			return less.render(appStyle).then(({ css }) => [css, appTpl, indexTpl])
+		})
+		.then(values => {
+			const [appStyle, appTpl, indexTpl] = values
 
-		// Component: Index
-		const Index = {
-			name: 'Index',
-			template: indexTpl,
-			props: {
-				element: {
-					type: String,
-					required: true
+			const d = document,
+				rootEl = () => {
+					const t = d.documentElement || d.body.parentNode
+					return t && typeof t.scrollTop == 'number' ? t : d.body
 				},
-				offset: {
-					type: Number
-				}
-			},
-			data: () => ({
-				items: []
-			}),
-			methods: {
-				onPopstate(event) {
+				pushState = ({ scrollTop, header }) => {
+					const pageIndex = {
+						scrollTop: scrollTop || rootEl().scrollTop,
+						header
+					}
+					if (header) {
+						history.pushState(
+							{ pageIndex },
+							d.title,
+							window.location.pathname + '#' + header
+						)
+					} else {
+						history.pushState({ pageIndex }, d.title)
+					}
+				},
+				onPopstate = event => {
 					const { state } = event
-					if (!state.pageIndex) return
-					const { scrollTop, header } = state.pageIndex
-					rootEl().scrollTop =
-						(header && this.getOffsetScrollTop(d.getElementById(header))) ||
-						scrollTop
+					state &&
+						state.pageIndex &&
+						(rootEl().scrollTop = state.pageIndex.scrollTop)
 				},
-				getOffsetScrollTop(el, relativeEl) {
-					return (
-						el.getBoundingClientRect().top -
-						(relativeEl || d.body).getBoundingClientRect().top -
-						(this.offset
-							? this.offset
-							: d.querySelector('.site-header .outer')
-							? d.querySelector('.site-header .outer').getBoundingClientRect()
-									.height
-							: 0)
-					)
-				},
-				gotoHeader(event, el) {
-					event.preventDefault()
-					pushState({
-						scrollTop: this.getOffsetScrollTop(el),
-						header: el.id
-					})
-					rootEl().scrollTop = this.getOffsetScrollTop(el)
-				}
-			},
-			created() {
-				const parent = d.querySelector(this.element)
-				parent &&
-					(this.items = parent.querySelectorAll('h1, h2, h3, h4, h5, h6'))
-			}
-		}
-		// Component: App
-		const App = Vue.extend({
-			name: 'App',
-			template: appTpl,
-			directives: {
-				'click-outside': vClickOutside()
-			},
-			components: {
-				Index
-			},
-			props: {
-				element: {
-					type: String,
-					required: true
-				}
-			},
-			data: () => ({
-				show: false,
-				headers: []
-			}),
-			methods: {
-				onTogglePanel() {
-					this.show = !this.show
-				},
-				onClose() {
-					this.show = false
-				}
-			},
-			mounted() {
-				const hash = window.location.hash
-				window.addEventListener('popstate', onPopstate)
-				history.replaceState(
-					{
-						pageIndex: {
-							scrollTop: rootEl().scrollTop,
-							...(hash && {
-								header: hash.substring(1)
-							})
+				vClickOutside = () => {
+					const findParentElement = (el, target) => {
+						while (el.parentNode) {
+							el = el.parentNode
+							if (el === target) return el
 						}
-					},
-					d.title,
-					window.location.href
-				)
-
-				if (hash) {
-					rootEl().scrollTop = Index.methods.getOffsetScrollTop(
-						d.getElementById(hash.substring(1))
-					)
+						return null
+					}
+					return {
+						bind(el, binding, vnode) {
+							el.event = event => {
+								if (!findParentElement(event.target, el)) binding.value()
+							}
+							d.body.addEventListener('click', el.event)
+						},
+						unbind(el, binding, vnode) {
+							d.body.removeEventListener('click', el.event)
+						}
+					}
+				},
+				prependStyle = (el, css) => {
+					const style = d.createElement('style')
+					style.innerHTML = css
+					el.prepend(style)
 				}
 
-				prependStyle(this.$el, appStyle)
+			// Component: Index
+			const Index = {
+				name: 'Index',
+				template: indexTpl,
+				props: {
+					element: {
+						type: String,
+						required: true
+					},
+					offset: {
+						type: Number
+					}
+				},
+				data: () => ({
+					items: []
+				}),
+				methods: {
+					onPopstate(event) {
+						const { state } = event
+						if (!state.pageIndex) return
+						const { scrollTop, header } = state.pageIndex
+						rootEl().scrollTop =
+							(header && this.getOffsetScrollTop(d.getElementById(header))) ||
+							scrollTop
+					},
+					getOffsetScrollTop(el, relativeEl) {
+						return (
+							el.getBoundingClientRect().top -
+							(relativeEl || d.body).getBoundingClientRect().top -
+							(this.offset
+								? this.offset
+								: d.querySelector('.site-header .outer')
+								? d.querySelector('.site-header .outer').getBoundingClientRect()
+										.height
+								: 0)
+						)
+					},
+					gotoHeader(event, el) {
+						event.preventDefault()
+						pushState({
+							scrollTop: this.getOffsetScrollTop(el),
+							header: el.id
+						})
+						rootEl().scrollTop = this.getOffsetScrollTop(el)
+					}
+				},
+				created() {
+					const parent = d.querySelector(this.element)
+					parent &&
+						(this.items = parent.querySelectorAll('h1, h2, h3, h4, h5, h6'))
+				}
 			}
-		})
+			// Component: App
+			const App = Vue.extend({
+				name: 'PageIndex',
+				template: appTpl,
+				directives: {
+					'click-outside': vClickOutside()
+				},
+				components: {
+					Index
+				},
+				props: {
+					element: {
+						type: String,
+						required: true
+					}
+				},
+				data: () => ({
+					show: false,
+					headers: []
+				}),
+				methods: {
+					onTogglePanel() {
+						this.show = !this.show
+					},
+					onClose() {
+						this.show = false
+					}
+				},
+				mounted() {
+					prependStyle(this.$el, appStyle)
+					const hash = window.location.hash
+					window.addEventListener('popstate', onPopstate)
+					history.replaceState(
+						{
+							pageIndex: {
+								scrollTop: rootEl().scrollTop,
+								...(hash && {
+									header: hash.substring(1)
+								})
+							}
+						},
+						d.title,
+						window.location.href
+					)
 
-		const PageIndex = new App({
-			propsData: {
-				element: '.post-full .post-content'
-			}
-		})
+					if (hash) {
+						rootEl().scrollTop = Index.methods.getOffsetScrollTop(
+							d.getElementById(hash.substring(1))
+						)
+					}
+				}
+			})
 
-		PageIndex.$mount('#page-index')
-	})
+			const PageIndex = new App({
+				propsData: {
+					element: '.post-full .post-content'
+				}
+			})
+
+			PageIndex.$mount('#page-index')
+		})
 })()
