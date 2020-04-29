@@ -1,0 +1,11 @@
+<div class="panel" v-click-outside="onClose">
+    <main v-if="show" class="panel__main">
+        <slot />
+    </main>
+    <footer class="panel__footer">
+        <button @click="onTogglePanel" class="panel__button">
+            <slot name="button-open" v-if="!show"><i class="fa fa-folder" /></slot>
+            <slot name="button-close" v-else><i class="fa fa-folder-open" /></slot>
+        </button>
+    </footer>
+</div>
