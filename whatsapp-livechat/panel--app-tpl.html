@@ -1,0 +1,9 @@
+<div class="panel" v-click-outside="onClose">
+    <main v-show="show" class="panel__main">
+        <slot />
+    </main>
+    <footer class="panel__footer">
+        <button @click="onTogglePanel" class="panel__button"><i class="fa"
+                :class="{'fa-list': !show, 'fa-window-close': show}"></i></button>
+    </footer>
+</div>
