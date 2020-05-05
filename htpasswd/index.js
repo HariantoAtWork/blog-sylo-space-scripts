@@ -18,10 +18,11 @@ import { saveAs } from 'file-saver/src/FileSaver'
 				console.error.bind(console, 'FAIL: Promise.all')
 			)
 		},
+		projectPath = '/content/images/files/js/htpasswd/',
 		templates = [
-			'/content/images/files/js/htpasswd/htpasswd.less',
-			'/content/images/files/js/htpasswd/htpasswd--app-tpl.html',
-			'/content/images/files/js/htpasswd/htpasswd--panel-tpl.html'
+			`${projectPath}htpasswd.less`,
+			`${projectPath}htpasswd--app-tpl.html`,
+			`${projectPath}htpasswd--panel-tpl.html`
 		],
 		d = document,
 		prependStyle = (el, css) => {
@@ -50,33 +51,29 @@ import { saveAs } from 'file-saver/src/FileSaver'
 					.then(wrapWithCancel(bcrypt.genSalt.bind(bcrypt, config.saltLength)))
 					.then(wrapWithCancel(bcrypt.hash.bind(bcrypt, text)))
 					.then(resolve, reject)
-			})
-
-	const setLocalstorage = (prop, defaultValue) => {
-		prop = prop.replace(/[\/!@#$%^&*]/g, '')
-		return {
-			get [prop]() {
-				return JSON.parse(localStorage.getItem(prop)) || defaultValue || ''
-			},
-			set [prop](value) {
-				localStorage.setItem(prop, JSON.stringify(value))
+			}),
+		setLocalstorage = (prop, defaultValue) => {
+			prop = prop.replace(/[\/!@#$%^&*]/g, '')
+			return {
+				get [prop]() {
+					return JSON.parse(localStorage.getItem(prop)) || defaultValue || ''
+				},
+				set [prop](value) {
+					localStorage.setItem(prop, JSON.stringify(value))
+				}
 			}
 		}
-	}
 
 	const model = {
-		User: {
-			username: '',
-			password: ''
-		}
-	}
-
-	const pathname = () => location.pathname.replace(/[\/!@#$%^&*]/g, '')
-
-	const storage = setLocalstorage('formData', {
-		users: [Object.create(model.User)],
-		path: ''
-	})
+			User: {
+				username: '',
+				password: ''
+			}
+		},
+		storage = setLocalstorage('formData', {
+			users: [Object.create(model.User)],
+			path: ''
+		})
 
 	loadTemplates(templates)
 		.then(values => {
@@ -119,8 +116,9 @@ import { saveAs } from 'file-saver/src/FileSaver'
 
 			// Root Component: App
 			const App = new Vue({
+				name: 'Htpasswd',
 				components: {
-					Panel
+					HtpasswdPanel: Panel
 				},
 				template: appTpl,
 				data: () => ({
@@ -183,8 +181,9 @@ AuthType Basic
 						return Promise.all(promises).then(values => values.join('\n'))
 					},
 					onGenerate(event) {
+						this.show = false
 						const { path, users } = this.formData
-						this.show = true
+
 						Promise.all([
 							this.generateHtaccess(path),
 							this.generateHtpasswd(users)
@@ -192,6 +191,7 @@ AuthType Basic
 							const [htaccessResult, htpasswdResult] = values
 							this.htaccessResult = htaccessResult
 							this.htpasswdResult = htpasswdResult
+							this.show = true
 						})
 					}
 				},

@@ -1,0 +1,27 @@
+<div class="generateinitdscript-app">
+    <div class="comp-paper">
+        <div class="comp-paper__content">
+
+            <form class="generateinitdscript-app__form">
+                <template v-for="(prop, key) in formData">
+
+                    <div class="form-info u-box u-box--align-center"><i
+                            class="form-info__icon fa fa-info-circle" /><span
+                            class="form-info__content u-flex">{{prop['placeholder']}} <br />default:
+                            <code>{{prop['defaultValue']}}</code></span></div>
+                    <div class="form-input u-box u-box--justify-center"><input class="u-flex"
+                            v-model="formData[key]['value']" :placeholder="prop['placeholder']"
+                            :title="prop['defaultValue'] +' ### '+ prop['placeholder']" /></div>
+
+                </template>
+            </form>
+        </div>
+    </div>
+
+    <h2>Export <i @click="exportFile('outputResult')" :download="validate(formData.exportedFile)"
+            class="fa fa-download" /></h2>
+
+    <Initd ref="outputResult" class="generateinitdscript-app__result" :formData="formData" />
+
+    <blockquote>Export this file to: <code>/etc/init.d/{{validate(formData.exportedFile)}}</code></blockquote>
+</div>

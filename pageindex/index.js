@@ -61,18 +61,11 @@
 						(rootEl().scrollTop = state.pageIndex.scrollTop)
 				},
 				vClickOutside = () => {
-					const findParentElement = (el, target) => {
-						while (el.parentNode) {
-							el = el.parentNode
-							if (el === target) return el
-						}
-						return null
-					}
 					return {
 						bind(el, binding, vnode) {
-							el.event = event => {
-								if (!findParentElement(event.target, el)) binding.value()
-							}
+							el.event = event =>
+								!Array.from(event.path).includes(el) && binding.value()
+
 							d.body.addEventListener('click', el.event)
 						},
 						unbind(el, binding, vnode) {
