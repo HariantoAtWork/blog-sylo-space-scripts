@@ -2,40 +2,43 @@
 	if (history.scrollRestoration) {
 		history.scrollRestoration = 'manual'
 	}
-	const loadTemplate = url =>
-		fetch(url)
-			.then(response => response.text())
-			.catch(console.error.bind(console, 'FAIL: loadTemplate'))
+	const d = document,
+		loadTemplate = url =>
+			fetch(url)
+				.then(response => response.text())
+				.catch(console.error.bind(console, 'FAIL: loadTemplate')),
+		loadTemplates = templates => {
+			const promises = templates => {
+				const list = []
+				templates.forEach(i => list.push(loadTemplate(i)))
+				return list
+			}
 
-	const loadTemplates = templates => {
-		const promises = templates => {
-			const list = []
-			templates.forEach(i => list.push(loadTemplate(i)))
-			return list
+			return Promise.all(promises(templates)).catch(
+				console.error.bind(console, 'FAIL: Promise.all')
+			)
+		},
+		projectFolder = '/content/images/files/js/pageindex/',
+		templates = [
+			`${projectFolder}pageindex.less`,
+			`${projectFolder}pageindex--app-tpl.html`,
+			`${projectFolder}pageindex--index-tpl.html`
+		],
+		prependStyle = (el, css) => {
+			const style = d.createElement('style')
+			style.innerHTML = css
+			el.prepend(style)
 		}
-
-		return Promise.all(promises(templates)).catch(
-			console.error.bind(console, 'FAIL: Promise.all')
-		)
-	}
-
-	const templates = [
-		'/content/images/files/js/pageindex/pageindex.less',
-		'/content/images/files/js/pageindex/pageindex--app-tpl.html',
-		'/content/images/files/js/pageindex/pageindex--index-tpl.html'
-	]
 
 	loadTemplates(templates)
 		.then(values => {
-			const [appStyle, appTpl, indexTpl] = values
-
-			return less.render(appStyle).then(({ css }) => [css, appTpl, indexTpl])
+			const [appStyle, ...rest] = values
+			return less.render(appStyle).then(({ css }) => [css, ...rest])
 		})
 		.then(values => {
 			const [appStyle, appTpl, indexTpl] = values
 
-			const d = document,
-				rootEl = () => {
+			const rootEl = () => {
 					const t = d.documentElement || d.body.parentNode
 					return t && typeof t.scrollTop == 'number' ? t : d.body
 				},
@@ -60,6 +63,7 @@
 						state.pageIndex &&
 						(rootEl().scrollTop = state.pageIndex.scrollTop)
 				},
+				// Vue Directive: v-click-outside
 				vClickOutside = () => {
 					return {
 						bind(el, binding, vnode) {
@@ -72,11 +76,6 @@
 							d.body.removeEventListener('click', el.event)
 						}
 					}
-				},
-				prependStyle = (el, css) => {
-					const style = d.createElement('style')
-					style.innerHTML = css
-					el.prepend(style)
 				}
 
 			// Component: Index
