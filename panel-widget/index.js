@@ -1,6 +1,7 @@
 import wrap from 'https://cdn.jsdelivr.net/npm/@vue/web-component-wrapper@1.2.0/dist/vue-wc-wrapper.min.js'
 ;(() => {
-	const loadTemplate = url =>
+	const d = document,
+		loadTemplate = url =>
 			fetch(url)
 				.then(response => response.text())
 				.catch(console.error.bind(console, 'FAIL: loadTemplate')),
@@ -15,11 +16,16 @@ import wrap from 'https://cdn.jsdelivr.net/npm/@vue/web-component-wrapper@1.2.0/
 				console.error.bind(console, 'FAIL: Promise.all')
 			)
 		},
-		d = document,
 		prependStyle = (el, css) => {
 			const style = d.createElement('style')
 			style.innerHTML = css
 			el.prepend(style)
+		},
+		prependLink = (el, href) => {
+			const link = d.createElement('link')
+			link.rel = 'stylesheet'
+			link.href = href
+			el.prepend(link)
 		}
 
 	const projectPath = '/content/images/files/js/panel-widget/'
@@ -31,8 +37,8 @@ import wrap from 'https://cdn.jsdelivr.net/npm/@vue/web-component-wrapper@1.2.0/
 
 	loadTemplates(templates)
 		.then(values => {
-			const [appStyle, appTpl, mainTpl] = values
-			return less.render(appStyle).then(({ css }) => [css, appTpl, mainTpl])
+			const [appStyle, ...rest] = values
+			return less.render(appStyle).then(({ css }) => [css, ...rest])
 		})
 		.then(values => {
 			const [appStyle, appTpl, mainTpl] = values
@@ -79,6 +85,10 @@ import wrap from 'https://cdn.jsdelivr.net/npm/@vue/web-component-wrapper@1.2.0/
 				},
 				mounted() {
 					prependStyle(this.$el, appStyle)
+					prependLink(
+						this.$el,
+						'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css'
+					)
 				}
 			})
 
