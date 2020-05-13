@@ -128,6 +128,7 @@
 					const parent = d.querySelector(this.element)
 					parent &&
 						(this.items = parent.querySelectorAll('h1, h2, h3, h4, h5, h6'))
+					if (!this.items.length) PageIndex.enabled = false
 				}
 			}
 			// Component: App
@@ -147,6 +148,7 @@
 					}
 				},
 				data: () => ({
+					enabled: true,
 					show: false,
 					headers: []
 				}),

@@ -2,7 +2,7 @@
     <main v-show="show" class="pageindex__main">
         <Index :element="element" />
     </main>
-    <footer class="pageindex__footer">
+    <footer v-if="enabled" class="pageindex__footer">
         <button @click="onTogglePanel" class="pageindex__button"><i class="fa"
                 :class="{'fa-list': !show, 'fa-window-close': show}"></i></button>
     </footer>
